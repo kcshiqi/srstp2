@@ -30,7 +30,11 @@ import { FontAwesome } from '@expo/vector-icons';
 
 export default class EditReceipt extends React.Component {
      static navigationOptions = {
-        header:null,
+        header: {
+
+          visible:false,
+
+        }
     };
     state = {
 
@@ -63,7 +67,7 @@ export default class EditReceipt extends React.Component {
     super();
 
     state = {
-      receiptData: null,
+      receiptData: null, //receive from homescreen
       merchant: null,
       branch: null,
       receiptNo: null,
@@ -542,18 +546,6 @@ addNewReceipt = () => {
         // this.setState({member: "this.props['receiptData']['memberCard']"})
         // this.setState({change: "this.props['receiptData']['changeReturned']"})
         //this.setState({noItemsPurchased: "1"});
-    }
-
-    render() {
-
-    if(this.state.receiptData!=null && this.state.success){
-
-      var recData = this.state.receiptData;
-      console.log(recData);
-
-      // var obj = recData['receiptData'];
-      // console.log(obj['changeReturned']);
-              //need to test
         var itemList = [];
 
         for(let i = 0; i < this.state.noItemsPurchased; i++){
@@ -572,10 +564,33 @@ addNewReceipt = () => {
 
             },
           )
-        }
-
+        }     
         this.setState({itemList:itemList});
-        
+
+    }
+
+    render() {
+    if(this.state.receiptData!=null && this.state.success){
+
+        var itemList = [];
+
+        for(let i = 0; i < this.state.noItemsPurchased; i++){
+
+
+          itemList.push(
+            {
+              item: this.props['receiptData']['itemList'][i],
+              qty: this.props['receiptData']['quantityList'][i],
+              price:this.props['receiptData']['priceList'][i],
+              category: this.props['receiptData']['categoryList'][i],
+
+              // item: "test1",
+              // qty: "test2",
+              // price: "test3",
+
+            },
+          )
+        }        
       
     }
 
@@ -655,7 +670,7 @@ addNewReceipt = () => {
 
 
                     {itemList.map((l, i) => (
-                <Card fontFamily='Raleway'>
+                <Card key={i} fontFamily='Raleway'>
                         <Input label="Item Name"
                                value={l.item}
                                marginTop={23}

@@ -65,7 +65,6 @@ export default class HomeScreen extends React.Component {
     uploading: false,
     receiptCounter: '-1',
     receiptData: null,
-    redirect: false,
     email: '', //retrieve from login page
     userKey: '',
     user: '',
@@ -129,6 +128,7 @@ export default class HomeScreen extends React.Component {
           var username = accountData.username;
           var image = accountData.imageUrl;
           this.setState({user:username});
+          console.log(image);
           this.setState({profileImage:image});
 
           });
@@ -137,7 +137,7 @@ export default class HomeScreen extends React.Component {
 
 
     promiseKey.then((counter) => {
-      console.log('ACCOUNTID: ' + accountKey + ' ,NO.OF RECEIPT: ' + counter);
+      console.log('ACCOUNTID: ' + accountKey + ' ,NO.OF RECEIPT: ' + counter+ ' USER  : '+this.state.user);
       //update state
       this.setState({receiptCounter:counter});
     });
@@ -189,12 +189,7 @@ export default class HomeScreen extends React.Component {
       console.log({ uploadResult });
         this.setState({ image: uploadResult.location });
         this.setState({ receiptData: uploadResult });
-        this.setState({redirect:true});
-        // console.log(this.props.navigation);
-
       }
-        // this.handleReceipt();
-
     } catch (e) {
       console.log({ uploadResponse });
       //console.log({ uploadResult });
@@ -206,19 +201,16 @@ export default class HomeScreen extends React.Component {
   }
 
 
-  renderDefault = () =>{
+renderDefault =()=>{
 
-    //no profile image, display default.
-    if(this.state.profileImage=='' || this.state.profileImage == null){
-      return(
-          <Image 
-            source={require('../assets/images/sjkUserImage.jpg')}
-            style={styles.userImage} 
-          />
-      );
-    }
+  if(this.state.profileImage=='' || this.state.profileImage == null){
+    return(
 
+        <Image source={require('../assets/images/sjkUserImage.jpg')} style={styles.userImage}/>
+    );
   }
+
+}
 
   _maybeRenderImage = () => {
     let { profileImage } = this.state;
@@ -260,35 +252,21 @@ export default class HomeScreen extends React.Component {
 
   }
 
-
-  // handleReceipt = () => {this.navigation.navigate('EditReceipt', {receiptData:this.state.receiptData})};
-
-  handleReceipt(){
-    // var navigation = this.navigation;
-    // console.log("NAVIGATION HERE");
-    // console.log(navigation);
-    // this.navigation.navigate('EditReceipt', {receiptData:this.state.receiptData});
-    // console.log(this.props.navigation);
-    // console.log(this.state.receiptData);
-    // console.log(this.state.receiptData['merchantName']);
-    // this.props.navigation.navigate('EditReceipt', {receiptData:this.state.receiptData, navigation: this.props.navigation});
-    // this.props.navigation.navigate('Login');
-
-  }
-
   componentDidMount() {
 
     this.getCredentials();
 
+
+
   }
+    
 
   render() {
     //if receipt counter is empty or till uploading, display loading screen
     if (this.state.receiptCounter=='-1' || this.state.uploading) { 
       return loadRender.renderLoadingView();
     }
-    else if(this.state.redirect){  //if receive receipt data from server, go to edit receipt page & pass data over using props
-      console.log("here");
+    else if(this.state.receiptData!=null){  //if receive receipt data from server, go to edit receipt page & pass data over using props
       return(
           <EditReceipt navigation={this.props.navigation}
           receiptData={
@@ -315,7 +293,6 @@ export default class HomeScreen extends React.Component {
             <Card borderColor='#84D3EB' backgroundColor='rgba(255,255,255,0.7)'>
               <List borderTopWidth={0} borderBottomWidth={0} backgroundColor='transparent' style={styles.listStyle}>
                 <ListItem
-                  key = {0}
                   roundAvatar
                   onPress={() => this._handlePhoto()}
                   title='START MISSION'
@@ -333,12 +310,12 @@ export default class HomeScreen extends React.Component {
             </Card>
 
             {recList.map((l, i) => (
-            <Card borderColor='#84D3EB' backgroundColor= 'rgba(255,255,255,0.7)' key={i}>
-              <List borderTopWidth={0} borderBottomWidth={0} backgroundColor='transparent' style={styles.listStyle} key={i}>
+            <Card borderColor='#84D3EB' backgroundColor= 'rgba(255,255,255,0.7)'>
+              <List borderTopWidth={0} borderBottomWidth={0} backgroundColor='transparent' style={styles.listStyle}>
                 <ListItem
                   roundAvatar
-                  key = {i}
                   //avatar={{ uri: l.avatar_url }}
+                  key={i}
                   onPress={() => this.props.navigation.navigate(l.path, { userKey: this.state.userKey })}
                   userKey
                   title={l.name}
@@ -355,8 +332,6 @@ export default class HomeScreen extends React.Component {
               </List>
             </Card>
             ))}
-
-
             </View>
         </View>
       </Image>
@@ -365,10 +340,8 @@ export default class HomeScreen extends React.Component {
 }
 //upload receipt to server for processing
 async function uploadImageAsync(uri) {
-  
-  //let apiUrl = 'http://13.250.7.67:8000/scanning/detect/' //free AWS
-  let apiUrl = 'http://13.229.81.160/scanning/detect/' //paid AWS
-
+  // let apiUrl = 'http://10.27.170.162:8000/scanning/detect/'
+  let apiUrl = 'http://13.250.7.67:8000/scanning/detect/' //AWS(??)
   // Note:
   // Uncomment this if you want to experiment with local server
   //
