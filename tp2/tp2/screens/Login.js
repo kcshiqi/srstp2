@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react';
-import {AsyncStorage, View, Text, Image, StyleSheet, Alert, Animated, Keyboard,TouchableWithoutFeedback} from 'react-native';
+import {AsyncStorage, View, Text, Image, ScrollView, StyleSheet, Alert, Animated, Keyboard,TouchableWithoutFeedback, KeyboardAvoidingView, TextInput} from 'react-native';
 import {Input, Button, Logo, Heading, BackgroundWrapper, AlertStatus} from '../components';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -7,6 +7,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {StackNavigator} from 'react-navigation';
 import firebase from '../firebase/firebase';
 import {getPlatformValue} from '../utilities';
+import loadRender from '../utilities/loadRender.js';
 
 
 export default class Login extends React.Component {
@@ -211,16 +212,17 @@ render() {
           AsyncStorage.removeItem('userSession');
           console.log("TEXSTHEIUGRGNDIKG");
 
+        }else if(this.state.loading){
+          return loadRender.renderLoadingView();
         }
 
-
         return (<BackgroundWrapper>
-            <View style={loginStyle.loginContainer}>
+            <ScrollView style={loginStyle.loginContainer}>
                 <Logo/>
                 <Heading marginTop={16} color="#808284" fontFamily="Pacifico" textAlign="center">
                     {'Smart Receipt'}
                 </Heading>
-                <View style={loginStyle.formContainer}>
+                <KeyboardAvoidingView behavior="padding" style={loginStyle.formContainer}>
                     <Animated.View style={{position: 'relative', left: this.state.animation.usernamePostionLeft}}>
                         <Input label="Email"
                                icon={<Icon name="envelope-o"/>}
@@ -238,20 +240,19 @@ render() {
                         />
                     </Animated.View>
                     <Animated.View style={{position: 'relative', top: this.state.animation.loginPositionTop}}>
-                      <TouchableWithoutFeedback onPress={() =>{Keyboard.dismiss()}}>
+                      
                         <Button marginTop={60} onPress={this.state.loading? 0 : this._handlePressSignIn.bind(this)} >
                             Sign in
                         </Button>
-                        </TouchableWithoutFeedback>
 
 						      <Button marginTop={20} onPress={this.handlePressSignUp}>
                             Sign Up
                         </Button>
 
                     </Animated.View>
-
-                </View>
-            </View>
+              <View style={{ height: 60 }} />
+                </KeyboardAvoidingView>
+            </ScrollView>
 
         </BackgroundWrapper>);
     }

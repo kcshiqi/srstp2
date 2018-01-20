@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import {
-    View, Text, Image, StyleSheet, Animated, InteractionManager, Alert
+    ScrollView, View, Text, Image, StyleSheet, Animated, InteractionManager, Alert
 } from 'react-native';
 import {Input, Button, Logo, Heading, BackgroundWrapper, AlertStatus} from '../components';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -125,6 +125,8 @@ export default class Login extends Component {
         }else{
           // check email exists before add
           firebase.database().ref('accounts').orderByChild('email').equalTo(emailInput).once('value', function(snapshot) {
+            // console.log(this.navigate);
+            // this.navigation.navigate("Login");
             var accountData = snapshot.val();
             if (accountData){
               console.log('account exists');
@@ -142,32 +144,25 @@ export default class Login extends Component {
               accountType: 'user',
               // imageURL: downloadURL,
               expiryTime: ''
-            }, function(error){
+            },function(error){
 
-              if(error){
-                console.log("cannnot insert");
+              if(!error){
+
+                Alert.alert('Successfully Registered!', '', [ {text:'Okay', onPress: ()=>this.navigation.navigate("Login")} ]);
+                console.log("no error");
               }else{
-                Alert.alert('Successfully Registered!', '', [ {text:'Okay', onPress: this.handleBack()} ]);
+
+                Alert.alert("An error has occurred. Account is not created.");
+
               }
 
+            }.bind( {navigation: this.navigation} ));
 
-            })
-             //, 
-
-
-            //  (error) => {
-            //   if (error) {
-            //     this.state.error = true;
-            //    console.log(error.message);
-            //    return
-            //  }
-            // };
-            success = true;
           }
-          });
+          }.bind( {navigation: this.props.navigation} ));
         }
 
-          Alert.alert('Successfully Registered!', '', [ {text:'Okay', onPress: this.handleBack()} ]);
+          //Alert.alert('Successfully Registered!', '', [ {text:'Okay', onPress: this.handleBack()} ]);
 
       }
     }
@@ -223,7 +218,7 @@ export default class Login extends Component {
 
 
         return <BackgroundWrapper iconLeft="arrow-left-circle" color="#58585B" onPressIcon={this.handleBack.bind(this)}>
-            <View style={loginStyle.loginContainer}>
+            <ScrollView style={loginStyle.loginContainer}>
 
                 <Logo marginTop={25}/>
                 <Animated.View style={{position: 'relative', top: this.state.animation.headerPositionTop}}>
@@ -262,7 +257,7 @@ export default class Login extends Component {
                         </Button>
                     </Animated.View>
                 </View>
-            </View>
+            </ScrollView>
             
         </BackgroundWrapper>
     }

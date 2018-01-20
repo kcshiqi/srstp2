@@ -66,7 +66,6 @@ export default class Input extends Component {
             onFocus={this.handleFocus.bind(this)}
             onBlur={this.handleBlur.bind(this)}
             onChangeText={this.props.onChange}
-            onSubmit={Keyboard.dismiss}
             secureTextEntry={this.props.secureTextEntry}
             underlineColorAndroid='rgba(0,0,0,0)'
         />
