@@ -120,7 +120,7 @@ addNewReceipt = () => {
       // {name: 'JACK N JILL Roller Coaster Barbeque Flavour 100g', category: 'food', type: 'snacks', price: 1.70, quantity: 2, brand: 'Jack N Jill'},
       // {name: 'LONDON Potato Chips Barbeque 160g', category: 'food', type: 'snacks', price: 3.55, quantity: 4, brand: 'London'},
       // ]
-
+      var receiptData = this.state.receiptData;
       var merchantName = this.state.merchant;
       var branchName = "";
       var branchAddress = this.state.branch;
@@ -157,10 +157,10 @@ addNewReceipt = () => {
         for(let i = 0; i < this.state.noItemsPurchased; i++){
           items.push(
             {
-              name: this.props['receiptData']['itemList'][i],
-              quantity: this.props['receiptData']['quantityList'][i],
-              price:this.props['receiptData']['priceList'][i],
-              category:this.props['receiptData']['categoryList'][i], 
+              name: receiptData['itemList'][i],
+              quantity: receiptData['quantityList'][i],
+              price: receiptData['priceList'][i],
+              category: receiptData['categoryList'][i], 
             },
           )
         }
@@ -503,37 +503,41 @@ addNewReceipt = () => {
   };
 
 
-    handleAdded = () => {this.props.navigation.navigate('Main')};
-    handleBack = () => {this.props.navigation.navigate('Main')};
+    // handleAdded = () => {this.props.navigation.navigate('Main')};
+    handleBack = () => {this.props.navigation.goBack('Home')};
 
     componentWillMount(){
        
-      // this.setState({receiptData: "test1"})
-       this.setState({receiptData: this.props});
-      //  this.setState({merchant: "test2"});
+
+      var receiptData = this.props.navigation.state.params.receiptData;
+      // console.log(receiptData);
+
+       // this.setState({receiptData: this.props});
+       this.setState({receiptData: receiptData});
+
 
        //console.log(this.props['receiptData']['changeReturned']);
         //transaction details
-        this.setState({merchant: this.props['receiptData']['merchantName']});
-        this.setState({branch: this.props['receiptData']['branchAddress']});
-        this.setState({receiptNo: this.props['receiptData']['receiptNo']});
-        this.setState({transactionDate: this.props['receiptData']['date']});
+        this.setState({merchant: receiptData['merchantName']});
+        this.setState({branch: receiptData['branchAddress']});
+        this.setState({receiptNo: receiptData['receiptNo']});
+        this.setState({transactionDate: receiptData['date']});
         
         //item details
         // console.log("HERE")
         console.log("NUMBER OF ITEMS PURCHASED");
-        console.log(this.props['receiptData']['noItemsPurchased']);
-        this.setState({noItemsPurchased: this.props['receiptData']['noItemsPurchased']});
+        console.log(receiptData['noItemsPurchased']);
+        this.setState({noItemsPurchased: receiptData['noItemsPurchased']});
         
         //payment details
-        this.setState({total: this.props['receiptData']['total']});
-        this.setState({paymentType: this.props['receiptData']['paymentType']});
-        this.setState({subTotal: this.props['receiptData']['subTotal']});
-        this.setState({amountPaid: this.props['receiptData']['paymentAmount']});
-        this.setState({member: this.props['receiptData']['memberCard']});
-        this.setState({change: this.props['receiptData']['changeReturned']});
+        this.setState({total: receiptData['total']});
+        this.setState({paymentType: receiptData['paymentType']});
+        this.setState({subTotal: receiptData['subTotal']});
+        this.setState({amountPaid: receiptData['paymentAmount']});
+        this.setState({member: receiptData['memberCard']});
+        this.setState({change: receiptData['changeReturned']});
 
-        this.setState({success: this.props['receiptData']['success']});
+        this.setState({success: receiptData['success']});
 
         // this.setState({merchant: "merch"})
         // this.setState({branch: "branch address"})
@@ -553,10 +557,10 @@ addNewReceipt = () => {
 
           itemList.push(
             {
-              item: this.props['receiptData']['itemList'][i],
-              qty: this.props['receiptData']['quantityList'][i],
-              price:this.props['receiptData']['priceList'][i],
-              category: this.props['receiptData']['categoryList'][i],
+              item: receiptData['itemList'][i],
+              qty: receiptData['quantityList'][i],
+              price:receiptData['priceList'][i],
+              category: receiptData['categoryList'][i],
 
               // item: "test1",
               // qty: "test2",
@@ -572,17 +576,19 @@ addNewReceipt = () => {
     render() {
     if(this.state.receiptData!=null && this.state.success){
 
+        var receiptData = this.state.receiptData;
         var itemList = [];
+
 
         for(let i = 0; i < this.state.noItemsPurchased; i++){
 
 
           itemList.push(
             {
-              item: this.props['receiptData']['itemList'][i],
-              qty: this.props['receiptData']['quantityList'][i],
-              price:this.props['receiptData']['priceList'][i],
-              category: this.props['receiptData']['categoryList'][i],
+              item: receiptData['itemList'][i],
+              qty: receiptData['quantityList'][i],
+              price:receiptData['priceList'][i],
+              category: receiptData['categoryList'][i],
 
               // item: "test1",
               // qty: "test2",
@@ -636,7 +642,7 @@ addNewReceipt = () => {
       }*/
 
         return (
-          <BackgroundWrapper iconLeft="arrow-left-circle" color="#58585B" onPressIcon={this.handleBack.bind(this)}>
+          <BackgroundWrapper>
              
 <ScrollView>
             <KeyboardAvoidingView behavior="padding" style={styles.loginContainer}>
@@ -736,6 +742,7 @@ addNewReceipt = () => {
                             </Card>
  
                       <Button onPress={this.addNewReceipt.bind(this)}>Save</Button>
+                      <Button onPress={this.handleBack.bind(this)}>Cancel</Button>
                     </View>
   
             </View>
@@ -743,7 +750,6 @@ addNewReceipt = () => {
               <View style={{ height: 60 }} />
             </KeyboardAvoidingView>
         </ScrollView>
-             <Button onPress={this.addNewReceipt.bind(this)}></Button>
 
         </BackgroundWrapper>);
     }

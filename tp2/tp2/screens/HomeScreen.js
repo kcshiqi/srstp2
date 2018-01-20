@@ -201,7 +201,9 @@ export default class HomeScreen extends React.Component {
       console.log({ e });
       alert('Upload failed, sorry :(');
     } finally {
+      console.log("BACK HERE");
       this.setState({ uploading: false }); //done uploading
+      this.handleReceipt();
     }
   }
 
@@ -267,12 +269,11 @@ export default class HomeScreen extends React.Component {
     // var navigation = this.navigation;
     // console.log("NAVIGATION HERE");
     // console.log(navigation);
-    // this.navigation.navigate('EditReceipt', {receiptData:this.state.receiptData});
+
     // console.log(this.props.navigation);
     // console.log(this.state.receiptData);
     // console.log(this.state.receiptData['merchantName']);
-    // this.props.navigation.navigate('EditReceipt', {receiptData:this.state.receiptData, navigation: this.props.navigation});
-    // this.props.navigation.navigate('Login');
+    this.props.navigation.navigate('EditReceipt', {receiptData:this.state.receiptData});
 
   }
 
@@ -283,19 +284,22 @@ export default class HomeScreen extends React.Component {
   }
 
   render() {
+
+    console.log(this.props.navigation.state.key);
+
     //if receipt counter is empty or till uploading, display loading screen
     if (this.state.receiptCounter=='-1' || this.state.uploading) { 
       return loadRender.renderLoadingView();
     }
-    else if(this.state.redirect){  //if receive receipt data from server, go to edit receipt page & pass data over using props
-      console.log("here");
-      return(
-          <EditReceipt navigation={this.props.navigation}
-          receiptData={
-            this.state.receiptData
-          }/>
-        );
-    }
+    // else if(this.state.redirect){  //if receive receipt data from server, go to edit receipt page & pass data over using props
+    //   console.log("here");
+    //   return(
+    //       <EditReceipt navigation={this.props.navigation}
+    //       receiptData={
+    //         this.state.receiptData
+    //       }/>
+    //     );
+    // }
 
     return (
       <Image source={require('../assets/images/bg.jpg')} style={styles.backgroundImage}>
