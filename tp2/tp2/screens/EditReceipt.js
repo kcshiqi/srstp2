@@ -45,7 +45,7 @@ export default class EditReceipt extends React.Component {
     };
 
     state = {
-
+      loading:false,
       selectedIndex: 0,
         currentPwd: '',
         newPwd: '',
@@ -91,10 +91,19 @@ export default class EditReceipt extends React.Component {
 
   }
 
-    
+formatDate = (input) => {
+  var date = input.substr(0,2);
+  var month = input.substr(3,2);
+  var year = input.substr(6,2);
+  return '20' + year + '/' + month + '/' + date;
+}
+
+formatString = (str) => {
+    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+}
     //ADD NEW RECEIPT FUNCTION HERE.
 addNewReceipt = () => {
-
+    this.setState({loading:true});
       // var merchantName = 'Giant';
       // var branchName = 'Ang Mo Kio 525 Branch';
       // var branchAddress = 'Blk 525 Ang Mo Kio Avenue 10 #01-2401/2403/2405 Singapore 560525';
@@ -141,6 +150,19 @@ addNewReceipt = () => {
       var amountPaid = this.state.amountPaid;
       var changeGiven = this.state.change;
       var discount = false;
+
+
+      receiptDate = this.formatDate(receiptDate.toString());
+      merchantName = this.formatString(merchantName.toString());
+      branchName = this.formatString(branchName.toString());
+      branchAddress = this.formatString(branchAddress.toString());
+
+                    // date: this.formatDate(receiptDate.toString()),
+
+                    // merchantName: this.formatString(merchantName.toString()),
+//   branchName : this.formatString(branchName.toString()),
+//   branchAddress : this.formatString(branchAddress.toString())
+
 
       // var items = [
       // {name: 'NATURES WONDERS Baked Almonds 220g', category: 'food', type: 'snacks', price: 6.90, quantity: 2, brand: 'Natures Wonders'},
@@ -303,8 +325,14 @@ addNewReceipt = () => {
                   var receiptKey = firebase.database().ref('receipts').child(userKey).push({
                     receiptNumber: receiptNumber,
                     date: receiptDate,
+                    // date: this.formatDate(receiptDate.toString()),
                     timeIssued: receiptIssuedTime,
+                    // merchantName: this.formatString(merchantName.toString()),
                     merchantName: merchantName,
+                    // branch : {
+                    //   branchName : this.formatString(branchName.toString()),
+                    //   branchAddress : this.formatString(branchAddress.toString())
+                    // },
                     branch : {
                       branchName : branchName,
                       branchAddress : branchAddress
@@ -323,8 +351,14 @@ addNewReceipt = () => {
                   var receiptKey = firebase.database().ref('receipts').child(userKey).push({
                     receiptNumber: receiptNumber,
                     date: receiptDate,
+                    // date: this.formatDate(receiptDate.toString()),
                     timeIssued: receiptIssuedTime,
+                    // merchantName: this.formatString(merchantName.toString()),
                     merchantName: merchantName,
+                    // branch : {
+                    //   // branchName : this.formatString(branchName.toString()),
+                    //   // branchAddress : this.formatString(branchAddress.toString())
+                    // },
                     branch : {
                       branchName : branchName,
                       branchAddress : branchAddress
@@ -391,12 +425,12 @@ addNewReceipt = () => {
       // add receipt items
       let promiseReceiptItemKey = new Promise((resolve, reject) => {
         promiseItemKey.then((itemKey) => {
-          promiseReceiptKey.then((receiptKey) => { //testing
 
-            console.log(this.navigation);
+          promiseReceiptKey.then((receiptKey) => { //testing
+            console.log(this.props.navigation);
 
             if(receiptKey != null){
-              var receiptItemKey = firebase.database().ref('receiptItems').push().set({
+              var receiptItemKey = firebase.database().ref('receiptItems').push({
                 itemID : itemKey,
                 // category : items[i].category,
                 // type : items[i].type,
@@ -407,33 +441,25 @@ addNewReceipt = () => {
                 price : items[i].price,
                 quantity : items[i].quantity,
                 receiptID : receiptKey
-              },function(error){
+              }).getKey();
 
-              if(!error){
-                Alert.alert('Receipt Added Successfully.', '', [ {text:'Okay', onPress: ()=>this.navigation.navigate("ViewReceipts")} ]);
-              }else{
-                Alert.alert("An error has occurred. Receipt is not added.");
-              }
-
-            }).getKey().bind( {navigation: this.props.navigation} );
-
-              resolve(receiptItemKey);
-
+              resolve(receiptItemKey)
+              this.setState({loading:false});
+                Alert.alert('Receipt Added Successfully.', '', [ {text:'Okay', onPress: ()=>this.handleAdded(receiptKey)} ]);
+                  
+              console.log(receiptItemKey);
               console.log("receipt created");
 
-              Alert.alert(
-                'Receipt Added.',
-                null,
-                [
-                  {text: 'Okay', onPress: this.handleAdded()},
-                ],
-              );
+
             }else{
-              console.log('No receipt created.');
+              this.setState({loading:false});
+              console.log('No receipt created.');                 
+               Alert.alert("An error has occurred. Receipt is not added.");
+
             }
 
-          });
-          // this.props.navigation.navigate('Login');
+          }).bind( {navigation: this.props.navigation} );
+          // this.props.navigation.navigate('Login'); // working
         });
 
       });
@@ -521,7 +547,7 @@ addNewReceipt = () => {
   };
 
 
-    // handleAdded = () => {this.props.navigation.navigate('Main')};
+    handleAdded = (receiptKey) => {this.props.navigation.goBack(null); this.props.navigation.navigate("ReceiptList"); this.props.navigation.navigate("ViewReceipts",{key:receiptKey});};
     handleBack = () => {
 
       this.props.navigation.goBack(null);
@@ -662,10 +688,10 @@ addNewReceipt = () => {
 
 
   */
-
-   /*   if (!this.state.receiptCounter) {
-        return this.renderLoadingView();
-      }*/
+      //if receipt counter is empty or till uploading, display loading screen
+    if (this.state.loading) { 
+      return loadRender.renderLoadingView();
+    }
 
         return (
           <BackgroundWrapper>

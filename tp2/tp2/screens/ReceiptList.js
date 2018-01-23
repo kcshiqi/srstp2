@@ -225,6 +225,8 @@ export default class ReceiptList extends React.Component {
             </List>
           </Card>
 
+
+          <View style={{ height: 60 }} />
         </ScrollView>
         </Image>
     );
