@@ -7,6 +7,7 @@ import LoginScreen from '../screens/Login';
 import ProfileScreen from '../screens/Profile';
 import RegisterScreen from '../screens/Register';
 import ViewReceipts from '../screens/ViewReceipts';
+import Home from '../screens/HomeScreen';
 import EditReceipt from '../screens/EditReceipt';
 
 import registerForPushNotificationsAsync from '../api/registerForPushNotificationsAsync';
@@ -18,6 +19,9 @@ const RootStackNavigator = StackNavigator(
     },
     Register: {
       screen: RegisterScreen,
+    },
+    Home: {
+      screen: Home,
     },
     Main: {
       screen: MainTabNavigator,

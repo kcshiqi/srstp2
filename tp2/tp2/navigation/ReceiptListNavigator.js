@@ -28,7 +28,7 @@ const ReceiptStackNavigator = StackNavigator(
 );
 
   render() {
-    return <RootStackNavigator />;
+    return <ReceiptStackNavigator />;
   }
 
 }

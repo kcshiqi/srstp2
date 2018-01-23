@@ -65,7 +65,6 @@ export default class HomeScreen extends React.Component {
     uploading: false,
     receiptCounter: '-1',
     receiptData: null,
-    redirect: false,
     email: '', //retrieve from login page
     userKey: '',
     user: '',
@@ -74,6 +73,9 @@ export default class HomeScreen extends React.Component {
   //top bar style
   static navigationOptions = {
     headerTitleStyle:{fontFamily:'American Typewriter',  fontWeight: 'normal'  },
+    title:            <Text style={{textAlign: 'center', color: 'white', fontFamily: 'Pacifico', fontSize: 20, }}>
+            Smart Receipt
+            </Text>,
     drawerLabel: 'Home',
     drawerIcon: ({ tintColor }) => (
     <MaterialIcons name="home" size={24} style={{ color: tintColor }} />
@@ -145,16 +147,32 @@ export default class HomeScreen extends React.Component {
 
   //choose photo album / camera (for adding receipts)
   _handlePhoto = () => {
-      Alert.alert(
-    'Upload Receipt',
-    null,
-    [
-      {text: 'Choose from Photo Album', onPress: () => this._pickImage()},
-      {text: 'Take from Camera', onPress: () => this._takePhoto()},
-      {text: 'Cancel', onPress: () => console.log('Cancelled'), style: 'cancel'},
-    ],
-    { cancelable: true }
-  );
+        if(Platform.OS == 'ios') {
+              Alert.alert(
+            'Upload Receipt',
+            null,
+            [
+              {text: 'Choose from Photo Album', onPress: () => this._pickImage()},
+              {text: 'Take from Camera', onPress: () => this._takePhoto()},
+              {text: 'Cancel', onPress: () => console.log('Cancelled'), style: 'cancel'},
+            ],
+            { cancelable: true }
+          );
+
+        }else{
+              Alert.alert(
+            'Upload Receipt',
+            null,
+            [
+              {text: 'Cancel', onPress: () => console.log('Cancelled'), style: 'cancel'},
+              {text: 'Take from Camera', onPress: () => this._takePhoto()},
+              {text: 'Choose from Photo Album', onPress: () => this._pickImage()},
+            ],
+            { cancelable: true }
+          );
+
+
+        }
   }
 
   //camera
@@ -186,10 +204,9 @@ export default class HomeScreen extends React.Component {
         uploadResponse = await uploadImageAsync(pickerResult.uri);
         uploadResult = await uploadResponse.json();
         console.log({ uploadResponse });
-      console.log({ uploadResult });
+        console.log({ uploadResult });
         this.setState({ image: uploadResult.location });
         this.setState({ receiptData: uploadResult });
-        this.setState({redirect:true});
         // console.log(this.props.navigation);
 
       }
@@ -201,9 +218,7 @@ export default class HomeScreen extends React.Component {
       console.log({ e });
       alert('Upload failed, sorry :(');
     } finally {
-      console.log("BACK HERE");
       this.setState({ uploading: false }); //done uploading
-      this.handleReceipt();
     }
   }
 
@@ -238,6 +253,8 @@ export default class HomeScreen extends React.Component {
     );
   }
   getCredentials = async () => {
+
+
     try {
       const value = await AsyncStorage.getItem('userSession');
       if (value !== null){
@@ -247,6 +264,7 @@ export default class HomeScreen extends React.Component {
       }
     } catch (error) {
       // Error retrieving data
+      console.log(error);
     }
 
         try {
@@ -258,6 +276,8 @@ export default class HomeScreen extends React.Component {
       }
     } catch (error) {
       // Error retrieving data
+      console.log(error);
+
     }
 
   }
@@ -273,7 +293,8 @@ export default class HomeScreen extends React.Component {
     // console.log(this.props.navigation);
     // console.log(this.state.receiptData);
     // console.log(this.state.receiptData['merchantName']);
-    this.props.navigation.navigate('EditReceipt', {receiptData:this.state.receiptData});
+    var param = this.state.receiptData;
+    this.props.navigation.navigate('EditReceipt', {receiptData:param});
 
   }
 
@@ -285,21 +306,23 @@ export default class HomeScreen extends React.Component {
 
   render() {
 
-    console.log(this.props.navigation.state.key);
 
     //if receipt counter is empty or till uploading, display loading screen
     if (this.state.receiptCounter=='-1' || this.state.uploading) { 
       return loadRender.renderLoadingView();
     }
-    // else if(this.state.redirect){  //if receive receipt data from server, go to edit receipt page & pass data over using props
-    //   console.log("here");
-    //   return(
-    //       <EditReceipt navigation={this.props.navigation}
-    //       receiptData={
-    //         this.state.receiptData
-    //       }/>
-    //     );
-    // }
+    else if(this.state.receiptData!=null){  //if receive receipt data from server, go to edit receipt page & pass data over using props
+
+      this.handleReceipt();
+
+      // console.log("here");
+      // return(
+      //     <EditReceipt navigation={this.props.navigation}
+      //     receiptData={
+      //       this.state.receiptData
+      //     }/>
+      //   );
+    }
 
     return (
       <Image source={require('../assets/images/bg.jpg')} style={styles.backgroundImage}>

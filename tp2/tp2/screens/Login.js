@@ -36,7 +36,9 @@ export default class Login extends React.Component {
         }
     }
 
+
     handleChangeInput(stateName, text) {
+
         this.setState({
             [stateName]: text
         })
@@ -207,6 +209,8 @@ export default class Login extends React.Component {
 
 render() {
 
+    console.log(this.props.navigation.state);
+      
         if(this.state.logOut){
 
           AsyncStorage.removeItem('userSession');
@@ -215,6 +219,9 @@ render() {
         }else if(this.state.loading){
           return loadRender.renderLoadingView();
         }
+
+
+
 
         return (<BackgroundWrapper>
             <ScrollView style={loginStyle.loginContainer}>
@@ -226,14 +233,14 @@ render() {
                     <Animated.View style={{position: 'relative', left: this.state.animation.usernamePostionLeft}}>
                         <Input label="Email"
                                icon={<Icon name="envelope-o"/>}
-                               value={this.state.username}
+                               value={this.state.username.replace(/\s/g,'')}
                                onChange={this.handleChangeInput.bind(this, 'username')}
                         />
                     </Animated.View>
                     <Animated.View style={{position: 'relative', left: this.state.animation.passwordPositionLeft}}>
                         <Input label="Password"
                                icon={<Icon name="key"/>}
-                               value={this.state.password}
+                               value={this.state.password.replace(/\s/g,'')}
                                marginTop={23}
                                onChange={this.handleChangeInput.bind(this, 'password')}
                                secureTextEntry

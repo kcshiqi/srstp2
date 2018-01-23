@@ -86,39 +86,41 @@ export default DrawerNavigator(
             Smart Receipt
             </Text>,
             headerStyle: {backgroundColor:'#59c3b5'},
-          tabBarIcon: ({ focused }) => {
-            const { routeName } = navigation.state;
-            let iconName;
-            switch (routeName) {
-              case 'Home':
-                iconName = 'home';
-                break;
-              case 'Achievements':
-                iconName = 'trophy';
-                break;
-              case 'Scan':
-                iconName = 'camera-retro';
-                break;
-              case 'Receipts':
-                iconName = 'book';
-                break;
-              case 'Drawer':
-                iconName = 'book';
-                break;
-            }
+      //     tabBarIcon: ({ focused }) => {
+      //       const { routeName } = navigation.state;
+      //       let iconName;
+      //       switch (routeName) {
+      //         case 'Home':
+      //           iconName = 'home';
+      //           break;
+      //         case 'Achievements':
+      //           iconName = 'trophy';
+      //           break;
+      //         case 'Scan':
+      //           iconName = 'camera-retro';
+      //           break;
+      //         case 'Receipts':
+      //           iconName = 'book';
+      //           break;
+      //         case 'Drawer':
+      //           iconName = 'book';
+      //           break;
+      //       }
     
 
-        return (
-          <FontAwesome
-            name={iconName}
-            size={25}
-            color={focused ? '#58585B' : '#808284'}
-          />
+      //   return (
+      //     <FontAwesome
+      //       name={iconName}
+      //       size={25}
+      //       color={focused ? '#58585B' : '#808284'}
+      //     />
 
 
-        );
-      },
+      //   );
+      // },
     }),
+
+    
     // Put tab bar on bottom of screen on both platforms
     tabBarComponent: TabBarBottom,
     tabBarPosition: 'bottom',

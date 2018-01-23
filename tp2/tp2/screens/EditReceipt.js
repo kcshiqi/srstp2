@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react';
-import { DrawerNavigator, TabBarBottom, StackNavigator } from 'react-navigation';
+import { DrawerNavigator, TabBarBottom, StackNavigator, NavigationActions } from 'react-navigation';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {
     View, Text, Image, StyleSheet, Animated, InteractionManager, Alert, ScrollView,StatusBar,
@@ -29,13 +29,21 @@ import {
 import { FontAwesome } from '@expo/vector-icons';
 
 export default class EditReceipt extends React.Component {
-     static navigationOptions = {
-        header: {
+    //  static navigationOptions = {
+    //     header: {
 
-          visible:false,
+    //       visible:false,
 
-        }
+    //     }
+    // };
+
+
+
+    static navigationOptions = {
+        header:null,
+        title: null,
     };
+
     state = {
 
       selectedIndex: 0,
@@ -45,7 +53,21 @@ export default class EditReceipt extends React.Component {
             headerPositionTop: new Animated.Value(-148),
             formPositionLeft: new Animated.Value(614),
             buttonPositionTop: new Animated.Value(1354)
-        }
+        },
+      receiptData: null, //receive from homescreen
+      merchant: null,
+      branch: null,
+      receiptNo: null,
+      transactionDate: null,
+      subTotal: null,
+      total: null,
+      paymentType: null,
+      amountPaid: null,
+      member: null,
+      noItemsPurchased: null,
+      change: null,
+      success: false,
+      itemList:null,
     }
   updateIndex(selectedIndex) {
     this.setState({ selectedIndex });
@@ -65,23 +87,6 @@ export default class EditReceipt extends React.Component {
 
   constructor() {
     super();
-
-    state = {
-      receiptData: null, //receive from homescreen
-      merchant: null,
-      branch: null,
-      receiptNo: null,
-      transactionDate: null,
-      subTotal: null,
-      total: null,
-      paymentType: null,
-      amountPaid: null,
-      member: null,
-      noItemsPurchased: null,
-      change: null,
-      success: false,
-      itemList:null,
-    }
     this.updateIndex = this.updateIndex.bind(this);
 
   }
@@ -504,17 +509,23 @@ addNewReceipt = () => {
 
 
     // handleAdded = () => {this.props.navigation.navigate('Main')};
-    handleBack = () => {this.props.navigation.goBack('Home')};
+    handleBack = () => {
+
+      this.props.navigation.goBack(null);
+      // this.props.navigation.goBack(null);
+
+    };
 
     componentWillMount(){
        
+
+    console.log(this.props.navigation.state);
 
       var receiptData = this.props.navigation.state.params.receiptData;
       // console.log(receiptData);
 
        // this.setState({receiptData: this.props});
-       this.setState({receiptData: receiptData});
-
+       this.setState({receiptData:receiptData});
 
        //console.log(this.props['receiptData']['changeReturned']);
         //transaction details
@@ -574,6 +585,8 @@ addNewReceipt = () => {
     }
 
     render() {
+
+      console.log("HERE2222");
     if(this.state.receiptData!=null && this.state.success){
 
         var receiptData = this.state.receiptData;

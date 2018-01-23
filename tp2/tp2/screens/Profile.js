@@ -103,10 +103,10 @@ updateProfile = () => {
   var image = this.state.image;
   console.log(image);
    
-         console.log( firstnameInput, lastnameInput, genderInput, dobInput, salaryInput, postalInput, addrInput);
+ console.log( firstnameInput, lastnameInput, genderInput, dobInput, salaryInput, postalInput, addrInput);
 
   // check blank fields
-  if(firstnameInput == '' || lastnameInput == '' || genderInput == '' || dobInput == '' || salaryInput == '' || postalInput == '' || addrInput == ''){
+  if(firstnameInput == null || lastnameInput == null || genderInput == null || dobInput == null || salaryInput == null || postalInput == null || addrInput == null){
     console.log("Please fill in all the fields!");
     Alert.alert("Please do not leave any fields blank.");
   }
@@ -530,7 +530,7 @@ handleChangeProfilePic = () => {
 
 async function uploadImageAsync(uri) {
    let apiUrl = 'http://13.250.7.67:8000/scanning/image/';
-   //let apiUrl = "http://uploads.im/api?upload="+uri+"&resize_width=100";
+   //http://13.229.81.160/scanning/image/  //paid AWS
 
  //   if (Constants.isDevice) {
  //     apiUrl = `http://13.250.7.67:8000/scanning/detect/`;
