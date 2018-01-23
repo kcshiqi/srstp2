@@ -421,6 +421,19 @@ addNewReceipt = () => {
             }else{
               console.log('No receipt created.');
             }
+            // ,function(error){
+
+            //   if(!error){
+
+            //     Alert.alert('Successfully Registered!', '', [ {text:'Okay', onPress: ()=>this.navigation.navigate("Login")} ]);
+            //     console.log("no error");
+            //   }else{
+
+            //     Alert.alert("An error has occurred. Account is not created.");
+
+            //   }
+
+            // }
           });
         });
       });

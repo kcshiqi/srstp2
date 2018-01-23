@@ -472,16 +472,32 @@ renderDefault =()=>{
 
 
 handleChangeProfilePic = () => {
-    Alert.alert(
-  'Choose Profile Picture',
-  null,
-  [
-    {text: 'Choose from photo album', onPress: () => this._pickImage},
-    {text: 'Take from camera', onPress: () => this._takePhoto},
-    {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-  ],
-  { cancelable: true }
-)
+    if(Platform.OS == 'ios') {
+          Alert.alert(
+        'Upload Receipt',
+        null,
+        [
+          {text: 'Choose from Photo Album', onPress: () => this._pickImage()},
+          {text: 'Take from Camera', onPress: () => this._takePhoto()},
+          {text: 'Cancel', onPress: () => console.log('Cancelled'), style: 'cancel'},
+        ],
+        { cancelable: true }
+      );
+
+    }else{
+          Alert.alert(
+        'Upload Receipt',
+        null,
+        [
+          {text: 'Cancel', onPress: () => console.log('Cancelled'), style: 'cancel'},
+          {text: 'Take from Camera', onPress: () => this._takePhoto()},
+          {text: 'Choose from Photo Album', onPress: () => this._pickImage()},
+        ],
+        { cancelable: true }
+      );
+
+
+    }
 }
   _takePhoto = async () => {
     let pickerResult = await ImagePicker.launchCameraAsync({

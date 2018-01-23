@@ -178,7 +178,7 @@ export default class Login extends React.Component {
       return false;
      }
    } 
-    handleSuccessfulLogin = () => {this.props.navigation.navigate('Main', {userKey:this.state.userKey, email:this.state.username})};
+    handleSuccessfulLogin = () => {this.props.navigation.navigate('Main', {userKey:this.state.userKey.replace(/\s/g,''), email:this.state.username.replace(/\s/g,'')})};
 
     handlePressSignUp = () => {this.props.navigation.navigate('Register')};
 
@@ -208,6 +208,7 @@ export default class Login extends React.Component {
     }
 
 render() {
+
 
     console.log(this.props.navigation.state);
       

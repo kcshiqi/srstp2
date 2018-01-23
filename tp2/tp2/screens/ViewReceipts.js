@@ -362,6 +362,7 @@ paymentList=[]
               ))}
           </Card>
 
+          <View style={{ height: 60 }} />
         </ScrollView>
         </Image>
         </BackgroundWrapper>
