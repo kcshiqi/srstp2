@@ -356,7 +356,6 @@ addNewReceipt = () => {
 
       // loop through each items in receipt
       for(let i = 0; i < items.length; i++){
-
         // check item exists before add
         let promiseItemKey = new Promise((resolve, reject) => {
           // asynchronous call to check if new receipt added before add in items
@@ -392,9 +391,12 @@ addNewReceipt = () => {
       // add receipt items
       let promiseReceiptItemKey = new Promise((resolve, reject) => {
         promiseItemKey.then((itemKey) => {
-          promiseReceiptKey.then((receiptKey) => {
+          promiseReceiptKey.then((receiptKey) => { //testing
+
+            console.log(this.navigation);
+
             if(receiptKey != null){
-              var receiptItemKey = firebase.database().ref('receiptItems').push({
+              var receiptItemKey = firebase.database().ref('receiptItems').push().set({
                 itemID : itemKey,
                 // category : items[i].category,
                 // type : items[i].type,
@@ -405,7 +407,16 @@ addNewReceipt = () => {
                 price : items[i].price,
                 quantity : items[i].quantity,
                 receiptID : receiptKey
-              }).getKey();
+              },function(error){
+
+              if(!error){
+                Alert.alert('Receipt Added Successfully.', '', [ {text:'Okay', onPress: ()=>this.navigation.navigate("ViewReceipts")} ]);
+              }else{
+                Alert.alert("An error has occurred. Receipt is not added.");
+              }
+
+            }).getKey().bind( {navigation: this.props.navigation} );
+
               resolve(receiptItemKey);
 
               console.log("receipt created");
@@ -417,25 +428,14 @@ addNewReceipt = () => {
                   {text: 'Okay', onPress: this.handleAdded()},
                 ],
               );
-
             }else{
               console.log('No receipt created.');
             }
-            // ,function(error){
 
-            //   if(!error){
-
-            //     Alert.alert('Successfully Registered!', '', [ {text:'Okay', onPress: ()=>this.navigation.navigate("Login")} ]);
-            //     console.log("no error");
-            //   }else{
-
-            //     Alert.alert("An error has occurred. Account is not created.");
-
-            //   }
-
-            // }
           });
+          // this.props.navigation.navigate('Login');
         });
+
       });
 
       // update lookup table to get how much spend on each types/categories
@@ -452,7 +452,7 @@ addNewReceipt = () => {
 
     }
 
-    Promise.all([promiseBranchKey, promiseCurrencyKey, promiseReceiptKey]).then(values => { 
+    Promise.all([promiseBranchKey, promiseCurrencyKey, promiseReceiptKey]).then(values => {
         console.log('branchkey' + values[0]); 
         console.log('currencykey' + values[1]);
         console.log('receiptkey' + values[2]);

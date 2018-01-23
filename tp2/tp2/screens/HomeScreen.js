@@ -73,9 +73,7 @@ export default class HomeScreen extends React.Component {
   //top bar style
   static navigationOptions = {
     headerTitleStyle:{fontFamily:'American Typewriter',  fontWeight: 'normal'  },
-    title:            <Text style={{textAlign: 'center', color: 'white', fontFamily: 'Pacifico', fontSize: 20, }}>
-            Smart Receipt
-            </Text>,
+    title: <Text style={{textAlign: 'center', color: 'white', fontFamily: 'Pacifico', fontSize: 20, }}>Smart Receipt</Text>,
     drawerLabel: 'Home',
     drawerIcon: ({ tintColor }) => (
     <MaterialIcons name="home" size={24} style={{ color: tintColor }} />
@@ -322,6 +320,7 @@ export default class HomeScreen extends React.Component {
       //       this.state.receiptData
       //     }/>
       //   );
+
     }
 
     return (

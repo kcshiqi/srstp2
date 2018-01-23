@@ -3,8 +3,7 @@ import {AsyncStorage, View, Text, Image, ScrollView, StyleSheet, Alert, Animated
 import {Input, Button, Logo, Heading, BackgroundWrapper, AlertStatus} from '../components';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-//import {Actions, ActionConst} from 'react-native-router-flux';
-import {StackNavigator} from 'react-navigation';
+import {StackNavigator, NavigationActions} from 'react-navigation';
 import firebase from '../firebase/firebase';
 import {getPlatformValue} from '../utilities';
 import loadRender from '../utilities/loadRender.js';
@@ -48,8 +47,8 @@ export default class Login extends React.Component {
       this.setState({loading:true});
       // var passwordInput = 'abcd1234';
       // var emailInput = 'testuser1@gmail.com';
-      var passwordInput = this.state.password;
-      var emailInput = this.state.username;
+      var passwordInput = this.state.password.replace(/\s/g,'');
+      var emailInput = this.state.username.replace(/\s/g,'');
 
       //var AES = require("crypto-js/aes");
       var CryptoJS = require("crypto-js");
@@ -178,7 +177,17 @@ export default class Login extends React.Component {
       return false;
      }
    } 
-    handleSuccessfulLogin = () => {this.props.navigation.navigate('Main', {userKey:this.state.userKey.replace(/\s/g,''), email:this.state.username.replace(/\s/g,'')})};
+    handleSuccessfulLogin = () => {
+      const resetAction = NavigationActions.reset({
+        index: 0,
+        actions: [
+          NavigationActions.navigate({ routeName: 'Main'})
+        ]
+      })
+        this.props.navigation.dispatch(resetAction)
+      // this.props.navigation.navigate('Main', {userKey:this.state.userKey.replace(/\s/g,''), email:this.state.username.replace(/\s/g,'')});
+
+    };
 
     handlePressSignUp = () => {this.props.navigation.navigate('Register')};
 

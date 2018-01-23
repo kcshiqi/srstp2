@@ -198,8 +198,6 @@ export default class Login extends Component {
         return bytes;
     }
 
-        
-
     handleBack = () => {this.props.navigation.goBack(null)};
     handleRegister = () => {this.props.navigation.navigate('Main')};
     validateEmail = (mail) => {  
@@ -258,7 +256,6 @@ export default class Login extends Component {
                     </Animated.View>
                 </View>
             </ScrollView>
-            
         </BackgroundWrapper>
     }
 }
