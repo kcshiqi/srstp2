@@ -62,6 +62,7 @@ export default class Input extends Component {
     renderInputText(){
         return <TextInput
             value={this.props.value}
+            placeholder = {this.props.placeholder}
             style={styleInput.input}
             onFocus={this.handleFocus.bind(this)}
             onBlur={this.handleBlur.bind(this)}

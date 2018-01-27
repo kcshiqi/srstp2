@@ -47,8 +47,6 @@ export default class EditReceipt extends React.Component {
     state = {
       loading:false,
       selectedIndex: 0,
-        currentPwd: '',
-        newPwd: '',
         animation: {
             headerPositionTop: new Animated.Value(-148),
             formPositionLeft: new Animated.Value(614),
@@ -67,7 +65,15 @@ export default class EditReceipt extends React.Component {
       noItemsPurchased: null,
       change: null,
       success: false,
-      itemList:null,
+      complete:false,
+      itemList: {
+
+        item:{},
+        category:{},
+        price:{},
+        qty:{},
+
+      },
     }
   updateIndex(selectedIndex) {
     this.setState({ selectedIndex });
@@ -78,11 +84,55 @@ export default class EditReceipt extends React.Component {
         })
     }
 
-    handleChangeItemList(type, text, index){
-      var itemList = this.state.itemList;
-        itemList[index].item = "this";
-        console.log(index);
-        this.setState({itemList:itemList});
+    handleChangeArrayInput(type, index, text){
+
+
+      let newList = [];
+
+      if(type == 'itemList'){
+
+        newList = this.state.itemList;
+        newList[index] = text;
+        
+        this.setState({
+          itemList: newList
+        });
+
+      }else if(type == 'quantityList'){
+
+        newList = this.state.quantityList;
+        newList[index] = text;
+        
+        this.setState({
+          quantityList: newList
+        });
+
+      }else if(type == 'categoryList'){
+
+        newList = this.state.categoryList;
+        newList[index] = text;
+        
+        this.setState({
+          categoryList: newList
+        });
+
+      }else if(type == 'priceList'){
+
+        newList = this.state.priceList;
+        newList[index] = text;
+        
+        this.setState({
+          priceList: newList
+        });
+
+      }
+
+
+
+        // this.state.receiptData['itemList'][index] = [text];
+        // this.setState({receiptData:{itemList:{ [index]:text }}});
+        // this.setState({itemList:{ [type]:{ [index]:text } }});
+
     }
 
   constructor() {
@@ -135,6 +185,12 @@ addNewReceipt = () => {
       // {name: 'LONDON Potato Chips Barbeque 160g', category: 'food', type: 'snacks', price: 3.55, quantity: 4, brand: 'London'},
       // ]
       var receiptData = this.state.receiptData;
+
+      var itemList = this.state.itemList;
+      var quantityList = this.state.quantityList;
+      var priceList = this.state.priceList;
+      var categoryList = this.state.categoryList;
+
       var merchantName = this.state.merchant;
       var branchName = "";
       var branchAddress = this.state.branch;
@@ -184,10 +240,10 @@ addNewReceipt = () => {
         for(let i = 0; i < this.state.noItemsPurchased; i++){
           items.push(
             {
-              name: receiptData['itemList'][i],
-              quantity: receiptData['quantityList'][i],
-              price: receiptData['priceList'][i],
-              category: receiptData['categoryList'][i], 
+              name: this.formatString(this.state.itemList[i]),
+              quantity: this.state.quantityList[i],
+              price: this.state.priceList[i],
+              category: this.formatString(this.state.categoryList[i]),
             },
           )
         }
@@ -278,6 +334,10 @@ addNewReceipt = () => {
 
       // check if receipt exists before add
       let promiseReceiptKey = new Promise((resolve, reject) => {
+
+handleAdded = (receiptKey) => {this.props.navigation.goBack(null); this.props.navigation.navigate("ReceiptList"); this.props.navigation.navigate("ViewReceipts",{key:receiptKey});};
+    
+
         promiseUserKey.then((userKey) => {
           if(userKey != null){
 
@@ -325,14 +385,8 @@ addNewReceipt = () => {
                   var receiptKey = firebase.database().ref('receipts').child(userKey).push({
                     receiptNumber: receiptNumber,
                     date: receiptDate,
-                    // date: this.formatDate(receiptDate.toString()),
                     timeIssued: receiptIssuedTime,
-                    // merchantName: this.formatString(merchantName.toString()),
                     merchantName: merchantName,
-                    // branch : {
-                    //   branchName : this.formatString(branchName.toString()),
-                    //   branchAddress : this.formatString(branchAddress.toString())
-                    // },
                     branch : {
                       branchName : branchName,
                       branchAddress : branchAddress
@@ -351,14 +405,8 @@ addNewReceipt = () => {
                   var receiptKey = firebase.database().ref('receipts').child(userKey).push({
                     receiptNumber: receiptNumber,
                     date: receiptDate,
-                    // date: this.formatDate(receiptDate.toString()),
                     timeIssued: receiptIssuedTime,
-                    // merchantName: this.formatString(merchantName.toString()),
                     merchantName: merchantName,
-                    // branch : {
-                    //   // branchName : this.formatString(branchName.toString()),
-                    //   // branchAddress : this.formatString(branchAddress.toString())
-                    // },
                     branch : {
                       branchName : branchName,
                       branchAddress : branchAddress
@@ -377,8 +425,9 @@ addNewReceipt = () => {
                 }
 
                 resolve(receiptKey);
+                Alert.alert('Receipt Added Successfully.', '', [ {text:'Okay', onPress: ()=>handleAdded(receiptKey)} ]);
               }else{
-                console.log('duplicate receipt.');
+               Alert.alert("Duplicate Receipt. Receipt is not added.");
               }
 
             });
@@ -422,37 +471,26 @@ addNewReceipt = () => {
           });
         });
 
+
+
       // add receipt items
       let promiseReceiptItemKey = new Promise((resolve, reject) => {
         promiseItemKey.then((itemKey) => {
-
-          promiseReceiptKey.then((receiptKey) => { //testing
-            console.log(this.props.navigation);
-
+          var counter = 0;
+          promiseReceiptKey.then((receiptKey) => {
             if(receiptKey != null){
               var receiptItemKey = firebase.database().ref('receiptItems').push({
                 itemID : itemKey,
-                // category : items[i].category,
-                // type : items[i].type,
-                // brand : items[i].brand,
                 category : items[i].category,
-                type : "test",
-                brand : "test",
+                type : "NIL",
+                brand : "NIL",
                 price : items[i].price,
                 quantity : items[i].quantity,
                 receiptID : receiptKey
               }).getKey();
 
-              resolve(receiptItemKey)
-              this.setState({loading:false});
-                Alert.alert('Receipt Added Successfully.', '', [ {text:'Okay', onPress: ()=>this.handleAdded(receiptKey)} ]);
-                  
-              console.log(receiptItemKey);
-              console.log("receipt created");
-
-
+              resolve(receiptItemKey);
             }else{
-              this.setState({loading:false});
               console.log('No receipt created.');                 
                Alert.alert("An error has occurred. Receipt is not added.");
 
@@ -546,25 +584,65 @@ addNewReceipt = () => {
   ),
   };
 
-
     handleAdded = (receiptKey) => {this.props.navigation.goBack(null); this.props.navigation.navigate("ReceiptList"); this.props.navigation.navigate("ViewReceipts",{key:receiptKey});};
     handleBack = () => {
-
       this.props.navigation.goBack(null);
       // this.props.navigation.goBack(null);
-
     };
 
     componentWillMount(){
-       
 
-    console.log(this.props.navigation.state);
+      console.log(this.props.navigation.state);
 
       var receiptData = this.props.navigation.state.params.receiptData;
+      console.log(this.props.navigation.state.params.receiptData);
       // console.log(receiptData);
+        let itemList = [];
+        var counter = 0;
+        this.setState({complete:false});
 
+
+      // this.setState({itemList:{ item:{ [0]:receiptData['itemList'][0] } }});
+        for(let i = 0; i < this.state.noItemsPurchased; i++){
+// this.setState({itemList:{ item:{ [0]:receiptData['itemList'][0] } }});
+//           this.state.itemList.item[i] = receiptData['itemList'][i];
+          // this.setState({itemList:{ item:{ ['index_'+i]:receiptData['itemList'][i] } }});
+          // this.setState({itemList:{ item:{ ['index_'+i]:receiptData['itemList'][0] } }});
+          // this.setState({itemList:{ item:{ ['index_'+0]:receiptData['itemList'][0] } }});
+
+          itemList.push(
+            {
+              item: receiptData['itemList'][i],
+              qty: receiptData['quantityList'][i],
+              price:receiptData['priceList'][i],
+              category: receiptData['categoryList'][i],
+
+              // item: "test1",
+              // qty: "test2",
+              // price: "test3",
+            },
+          );
+          counter++;
+
+        }
+
+
+        if(counter == receiptData['noItemsPurchased']) {
+          this.setState({complete:true});
+          // this.setState({itemList:itemList});
+          // console.log(this.state.itemList.item.index_0);
+        }
+
+         // this.setState({itemList:{ item:{ [0]:receiptData['itemList'][0] } }});
+        // console.log(this.state.itemList.item.index_0);
+        // console.log(this.state.itemList);
        // this.setState({receiptData: this.props});
        this.setState({receiptData:receiptData});
+      this.setState({itemList:receiptData['itemList']});
+      this.setState({quantityList:receiptData['quantityList']});
+
+      this.setState({priceList:receiptData['priceList']});
+      this.setState({categoryList:receiptData['categoryList']});
 
        //console.log(this.props['receiptData']['changeReturned']);
         //transaction details
@@ -587,6 +665,10 @@ addNewReceipt = () => {
         this.setState({member: receiptData['memberCard']});
         this.setState({change: receiptData['changeReturned']});
 
+
+
+
+
         this.setState({success: receiptData['success']});
 
         // this.setState({merchant: "merch"})
@@ -600,59 +682,35 @@ addNewReceipt = () => {
         // this.setState({member: "this.props['receiptData']['memberCard']"})
         // this.setState({change: "this.props['receiptData']['changeReturned']"})
         //this.setState({noItemsPurchased: "1"});
-        var itemList = [];
-
-        for(let i = 0; i < this.state.noItemsPurchased; i++){
-
-
-          itemList.push(
-            {
-              item: receiptData['itemList'][i],
-              qty: receiptData['quantityList'][i],
-              price:receiptData['priceList'][i],
-              category: receiptData['categoryList'][i],
-
-              // item: "test1",
-              // qty: "test2",
-              // price: "test3",
-
-            },
-          )
-        }     
-        this.setState({itemList:itemList});
 
     }
 
     render() {
 
-      console.log("HERE2222");
     if(this.state.receiptData!=null && this.state.success){
-
+      console.log(this.state.itemList);
+      console.log(this.state.quantityList);
+      console.log(this.state.priceList);
+      console.log(this.state.categoryList);
         var receiptData = this.state.receiptData;
+        console.log(this.state.receiptData);
+        // console.log("Receipt Data "+this.state.receiptData.itemList[0]);
         var itemList = [];
 
-
         for(let i = 0; i < this.state.noItemsPurchased; i++){
-
-
           itemList.push(
             {
-              item: receiptData['itemList'][i],
-              qty: receiptData['quantityList'][i],
-              price:receiptData['priceList'][i],
-              category: receiptData['categoryList'][i],
-
-              // item: "test1",
-              // qty: "test2",
-              // price: "test3",
-
+              item: this.state.itemList[i],
+              qty: this.state.quantityList[i],
+              price:this.state.priceList[i],
+              category: this.state.categoryList[i],
             },
           )
         }        
       
     }
 
-
+    console.log(itemList);
 /*
 {
 
@@ -689,7 +747,11 @@ addNewReceipt = () => {
 
   */
       //if receipt counter is empty or till uploading, display loading screen
-    if (this.state.loading) { 
+
+
+      console.log(this.state.itemList);
+    if (this.state.loading && this.state.complete==false) { 
+
       return loadRender.renderLoadingView();
     }
 
@@ -719,9 +781,10 @@ addNewReceipt = () => {
                                              onChange={this.handleChangeInput.bind(this, 'receiptNo')}
                                       />
 
-                                      <Input label="Transaction Date"
+                                      <Input label="Transaction Date (DD/MM/YY)"
                                              value={this.state.transactionDate}
                                              marginTop={23}
+                                             placeholder="DD/MM/YY"
                                              onChange={this.handleChangeInput.bind(this, 'transactionDate')}
                                       />
                             </Card>
@@ -730,30 +793,31 @@ addNewReceipt = () => {
                     {itemList.map((l, i) => (
                 <Card key={i} fontFamily='Raleway'>
                         <Input label="Item Name"
+                              // placeholder={l.item}
                                value={l.item}
                                marginTop={23}
                                key = {i}
-                               onChange={this.handleChangeItemList.bind(this, 'item', i)}
+                               onChange={this.handleChangeArrayInput.bind(this, 'itemList', i)}
 
                         />
-
                         <Input label="Quantity"
                                value={l.qty}
                                marginTop={23}
                                key = {i+1}
-
-
+                               onChange={this.handleChangeArrayInput.bind(this, 'quantityList', i)}
                         />
                         <Input label="Price"
                                value={l.price}
                                marginTop={23}
                                key = {i+2}
+                               onChange={this.handleChangeArrayInput.bind(this, 'priceList', i)}
 
                         />
                         <Input label="Category"
                                value={l.category}
                                marginTop={23}
                                key = {i+3}
+                               onChange={this.handleChangeArrayInput.bind(this, 'categoryList', i)}
 
                         />
                 </Card>
@@ -783,7 +847,7 @@ addNewReceipt = () => {
                                       <Input label="Amount Paid"
                                              value={this.state.amountPaid}
                                              marginTop={23}
-                                             onChange={this.handleChangeInput.bind(this, 'paymentAmount')}
+                                             onChange={this.handleChangeInput.bind(this, 'amountPaid')}
                                       />
 
                                       <Input label="Change Due"
