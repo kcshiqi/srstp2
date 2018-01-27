@@ -59,6 +59,15 @@ export default class HomeScreen extends React.Component {
     this.updateIndex = this.updateIndex.bind(this);
     this.renderRow = this.renderRow.bind(this);
   }
+
+
+formatDate = (input) => {
+  var date = input.substr(8,8);
+  var month = input.substr(5,2);
+  var year = input.substr(0,4);
+  return date + '/' + month + '/' + year;
+}
+
 getReceiptDetails = () => {
     // hardcoded ID for testing purpose
     //var receiptKey = '-KrEJCttj3gjUOIo1VYR'; 
@@ -126,7 +135,7 @@ paymentList=[]
         receiptNo: resultObject.receiptNumber,
         merchName: resultObject.merchantName,
         brAddr: resultObject.branchAddress,
-        date: resultObject.date,
+        date: this.formatDate(resultObject.date),
       },
     )
 

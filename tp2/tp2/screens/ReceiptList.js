@@ -88,6 +88,13 @@ export default class ReceiptList extends React.Component {
     }
 
   }
+  
+formatDate = (input) => {
+  var date = input.substr(8,8);
+  var month = input.substr(5,2);
+  var year = input.substr(0,4);
+  return date + '/' + month + '/' + year;
+}
   getAllReceipt = () => {
       // hardcoded key for testing purpose
       //var accountKey = '-L1Cf_9IoQj8QpMKbVeP';
@@ -127,7 +134,7 @@ export default class ReceiptList extends React.Component {
           this.setState({array:arr});
           receiptList.push(
             {
-              date: 'Date: '+arr[i].date,
+              date: 'Date: '+this.formatDate(arr[i].date),
               name: 'Receipt No.: '+arr[i].receiptNumber,
               path: arr[i].receiptKey,
             })
