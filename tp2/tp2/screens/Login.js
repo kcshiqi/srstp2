@@ -19,6 +19,7 @@ export default class Login extends React.Component {
     <MaterialIcons name="input" size={24} style={{ color: tintColor }} />
   ),
     header:null,
+    title: null,
   };
 
       state = {
@@ -178,14 +179,14 @@ export default class Login extends React.Component {
      }
    } 
     handleSuccessfulLogin = () => {
-      const resetAction = NavigationActions.reset({
-        index: 0,
-        actions: [
-          NavigationActions.navigate({ routeName: 'Main'})
-        ]
-      })
-        this.props.navigation.dispatch(resetAction)
-      // this.props.navigation.navigate('Main', {userKey:this.state.userKey.replace(/\s/g,''), email:this.state.username.replace(/\s/g,'')});
+      // const resetAction = NavigationActions.reset({
+      //   index: 0,
+      //   actions: [
+      //     NavigationActions.navigate({ routeName: 'Main'})
+      //   ]
+      // })
+      //   this.props.navigation.dispatch(resetAction);
+      this.props.navigation.navigate('Main');
 
     };
 
@@ -194,6 +195,7 @@ export default class Login extends React.Component {
 
 
     componentDidMount() {
+          AsyncStorage.removeItem('userSession');
         const timing = Animated.timing;
         Animated.parallel([
             timing(this.state.animation.usernamePostionLeft, {
@@ -217,14 +219,16 @@ export default class Login extends React.Component {
     }
 
 render() {
-
-
-    console.log(this.props.navigation.state);
-      
+      // console.log(this.state.logOut);
         if(this.state.logOut){
-
+          console.log("HELLO HERE HERE");
           AsyncStorage.removeItem('userSession');
-          console.log("TEXSTHEIUGRGNDIKG");
+          const actionToDispatch = NavigationActions.reset({
+            index: 0,
+            key: null,  
+            actions: [NavigationActions.navigate({ routeName: 'Main' })]
+          })
+          this.props.navigation.dispatch(actionToDispatch);
 
         }else if(this.state.loading){
           return loadRender.renderLoadingView();

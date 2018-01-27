@@ -70,7 +70,10 @@ export default DrawerNavigator(
     //   screen: SettingsScreen,
     // },
     Logout: {
-      screen: LoginScreen
+      screen: LoginScreen,
+      // navigationOptions: {
+      //    logOut: true,
+      //  },
     }
   },
   {
